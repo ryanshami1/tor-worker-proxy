@@ -35,9 +35,7 @@ RUN mkdir -p /var/lib/tor/my_onion_site && \
 
 EXPOSE 10000
 
-# Start Nginx, run Tor, print the address to logs, and keep the process alive
+# Start Nginx, schedule address print in background, and launch Tor in foreground
 CMD nginx && \
-    su -s /bin/bash debian-tor -c "tor" & \
-    sleep 12 && \
-    cat /var/lib/tor/my_onion_site/hostname && \
-    tail -f /dev/null
+    (sleep 12 && cat /var/lib/tor/my_onion_site/hostname) & \
+    su -s /bin/bash debian-tor -c "tor"
