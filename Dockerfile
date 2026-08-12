@@ -9,12 +9,12 @@ RUN apt-get update && apt-get install -y \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Configure Nginx on port 10000
+# Configure Nginx on port 10000 to proxy to your Cloudflare Worker
 RUN echo 'server { \
     listen 10000; \
     location / { \
-        proxy_pass https://YOUR-WORKER-SUBDOMAIN.workers.dev; \
-        proxy_set_header Host YOUR-WORKER-SUBDOMAIN.workers.dev; \
+        proxy_pass https://jmtc-proxy.ryan-shami.workers.dev; \
+        proxy_set_header Host jmtc-proxy.ryan-shami.workers.dev; \
         proxy_ssl_server_name on; \
         proxy_ssl_protocols TLSv1.2 TLSv1.3; \
     } \
