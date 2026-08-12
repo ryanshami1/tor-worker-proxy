@@ -24,16 +24,20 @@ RUN echo 'server { \
     } \
 }' > /etc/nginx/sites-available/default
 
-# Configure Tor hidden service (Maps external port 80 to internal Nginx 10000)
+# Configure Tor hidden service
 RUN echo 'HiddenServiceDir /var/lib/tor/my_onion_site/' >> /etc/tor/torrc && \
     echo 'HiddenServicePort 80 127.0.0.1:10000' >> /etc/tor/torrc
 
-# Permissions
+# Fix permissions
 RUN mkdir -p /var/lib/tor/my_onion_site && \
     chown -R debian-tor:debian-tor /var/lib/tor/my_onion_site && \
     chmod 700 /var/lib/tor/my_onion_site
 
 EXPOSE 10000
 
+# Start Nginx, run Tor, print the address to logs, and keep the process alive
 CMD nginx && \
-    su -s /bin/bash debian-tor -c "tor"
+    su -s /bin/bash debian-tor -c "tor" & \
+    sleep 12 && \
+    cat /var/lib/tor/my_onion_site/hostname && \
+    tail -f /dev/null
